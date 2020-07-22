@@ -108,7 +108,6 @@ exports.create = ( req, res ) => {
                 if (err) {
                     throw err;
                 }
-                console.log(`${`./public/img/temp-${blog.postedBy}`} is deleted!`);
             });
 
             let i = 0;
