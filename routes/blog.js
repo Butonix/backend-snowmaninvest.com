@@ -23,7 +23,7 @@ var upload = multer({ storage: storage })
 
 const slugger = ( req, res, next) => {
   slug = req.params.slug;
-  fs.mkdir(`./public/img/${slug}`, (err) => {
+  fs.mkdir(`./public/img/${slug}`, {recursive: true}, (err) => {
     if(err){
       console.log(err)
     }

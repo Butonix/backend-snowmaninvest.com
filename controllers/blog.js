@@ -78,11 +78,14 @@ exports.create = ( req, res ) => {
         blog.mdesc = striptags(excerpt);
         let arrayOfCategories = categories && categories.split(',');
 
+        // Create an Object stores Image Property Data
         let image = contentObj.blocks.filter( (block) => {
             return block.type == 'image'
         })
 
-        if(!image.length === 0) {
+        
+
+        if(!image.length == 0) {
             let finalImageUrl = [];
             let finalFileName = [];
 
@@ -91,18 +94,33 @@ exports.create = ( req, res ) => {
                 finalFileName[i] = image[i].data.file.url.slice(image[i].data.file.url.indexOf("image"))
             }
             // Create Permanent Folder
-            fs.mkdir(`./public/img/perma-${req.body.userId}`, (err) => {
-                for(let i = 0; i < image.length ; i++) {
-                    fs.copyFileSync(`./public/img/temp-${req.body.userId}/${finalFileName[i]}`,
-                    `./public/img/perma-${req.body.userId}/${finalFileName[i]}`);
+            fs.mkdir(`./public/img/perma-${blog.postedBy}`,{ recursive: true }, (err) => {
+                if(err) {
+                    throw err;
                 }
-                fs.rmdir(`./public/img/temp-${req.body.userId}`, { recursive: true }, (err) => {
+            })
+
+            for(let i = 0; i < image.length ; i++) {
+                fs.copyFileSync(`./public/img/temp-${blog.postedBy}/${finalFileName[i]}`,
+                `./public/img/perma-${blog.postedBy}/${finalFileName[i]}`);
+            }
+            fs.rmdir(`./public/img/temp-${blog.postedBy}`, { recursive: true }, (err) => {
                 if (err) {
                     throw err;
                 }
-                    console.log(`${`./public/img/temp-${req.body.userId}`} is deleted!`);
-                });
-            })
+                console.log(`${`./public/img/temp-${blog.postedBy}`} is deleted!`);
+            });
+
+            let i = 0;
+            console.log(blog.body.blocks);
+            for ( let h = 0 ; h < blog.body.blocks.length; h++ ) {
+                if(blog.body.blocks[h].type == "image"){
+                    blog.body.blocks[h].data.file.url =  `${process.env.EDITOR_URL}/static/img/perma-${blog.postedBy}/${finalFileName[i]}`;
+                    console.log("after: " , blog.body.blocks[h].data.file.url)
+                }   
+            }   
+
+
         }
 
         
