@@ -30,7 +30,7 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use('/static', express.static('public'));
+app.use('/static', express.static( __dirname + '/public'));
 
 // cors
 if (process.env.NODE_ENV === 'development') {
