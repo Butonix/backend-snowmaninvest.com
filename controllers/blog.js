@@ -137,8 +137,12 @@ exports.create = ( req, res ) => {
         }        
         
         blog.save((err, result) => {
+            if(err) {
+                return res.status(400).json({
+                    error: errorHandler(err)
+                })
+            }
             
-
             Blog.findByIdAndUpdate( result._id , { $push: {categories: arrayOfCategories}} , { new :true }).exec(
                 (err, result) => {
                     if(err) {
