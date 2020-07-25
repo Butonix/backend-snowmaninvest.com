@@ -42,13 +42,7 @@ const blogSchema = new mongoose.Schema(
             ref: 'User'
         }
     },
-    { timestamps: true },
-    {writeConcern: {
-        w: 'majority',
-        j: true,
-        wtimeout: 10000
-      }
-    }
+    { timestamps: true }
 );
 
 module.exports = mongoose.model('Blog', blogSchema);
