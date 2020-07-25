@@ -43,9 +43,11 @@ const blogSchema = new mongoose.Schema(
         }
     },
     { timestamps: true },
-    { writeConcern: {
-        w: 'majority'
-        }
+    {writeConcern: {
+        w: 'majority',
+        j: true,
+        wtimeout: 1000
+      }
     }
 );
 
