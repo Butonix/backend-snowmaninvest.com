@@ -42,7 +42,11 @@ const blogSchema = new mongoose.Schema(
             ref: 'User'
         }
     },
-    { timestamps: true }
+    { timestamps: true },
+    { writeConcern: {
+        w: 'majority'
+        }
+    }
 );
 
 module.exports = mongoose.model('Blog', blogSchema);
