@@ -1,79 +1,28 @@
 const express = require('express');
-const router = express.Router();
-const { create, list, read, photo, bookmark, remove, update, listSearch } = require('../controllers/blog');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
-const Meta = require('html-metadata-parser');
-const { requireSignin, authMiddleware } = require('../controllers/auth')
+const router = express.Router();
+const { create, list, read, photo, bookmark, remove, update, listSearch } = require('../controllers/blog');
+const { requireSignin, authMiddleware } = require('../controllers/auth');
+const { imgSlugger , imgResponse, imgUrl, compressImg, meta } = require('../controllers/textEditor');
 
-let slug = "";
-
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, `./public/img/${slug}`)
-    },
-    filename: function (req, file, cb) {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname))
-    }
-  })
-
-var upload = multer({ storage: storage })
-
-const slugger = ( req, res, next) => {
-  slug = req.params.slug;
-  fs.mkdir(`./public/img/${slug}`, {recursive: true}, (err) => {
-    if(err){
-      console.log(err)
-    }
-  })
-  next();
-}
-
-router.get('/linkUrl', ( req, res) => {
-  Meta.parser(req.query.url, function (err, result) {
-
-    if(err) {
-      console.log(err)
-    }
-
-    let data = {
-      title: result.meta.title,
-      description: result.meta.description,
-      image: {
-        url: result.og.image
-      }
-    }
-    return res.json({
-      "success" : 1,
-      "meta": data
-    })
-  })
-  
-  
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, `./public/rawImg/${req.params.slug}`)
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    fileName = file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname) ;
+    cb( null, fileName);
+  }
 })
 
-router.post('/uploadFile/:slug',slugger, upload.single('image'), (req, res) => {
-  return res.json({
-    success: 1,
-    file: {
-      url: `${process.env.EDITOR_URL + `/static/img/${slug}/` + req.file.filename}`,
-      }
-    })
-} )
-
-router.post('/uploadUrl', (req, res) => {
-
-  return res.json({
-    success: 1,
-    file: {
-      url: `${req.body.url}`,
-      }
-    })
-} )
+const upload = multer({ storage: storage });
 
 
+router.post('/uploadFile/:slug', imgSlugger, upload.single('image'), compressImg, imgResponse )
+router.get('/linkUrl', meta)
+router.post('/uploadUrl', imgUrl);
 router.post('/blog', requireSignin, authMiddleware, create);
 router.post('/blogs', list);
 router.post('/blog/bookmark', requireSignin, authMiddleware, bookmark);
