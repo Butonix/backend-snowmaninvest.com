@@ -136,13 +136,18 @@ exports.create = ( req, res ) => {
             blog.photo.contentType = files.photo.type;
         }        
         
+        return res.status(200).json({
+            blog: blog
+        })
+
+
         blog.save((err, result) => {
             if(err) {
                 return res.status(400).json({
                     error: errorHandler(err)
                 })
             }
-            
+
             Blog.findByIdAndUpdate( result._id , { $push: {categories: arrayOfCategories}} , { new :true }).exec(
                 (err, result) => {
                     if(err) {
