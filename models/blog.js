@@ -46,7 +46,7 @@ const blogSchema = new mongoose.Schema(
     {writeConcern: {
         w: 'majority',
         j: true,
-        wtimeout: 1000
+        wtimeout: 10000
       }
     }
 );
