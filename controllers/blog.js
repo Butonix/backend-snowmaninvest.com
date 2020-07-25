@@ -67,7 +67,6 @@ exports.create = ( req, res ) => {
             excerpt = smartTrim(paragraphArray[0].data.text, 30, ' ', '...');
         }
         
-
         let blog = new Blog();
         blog.title = title;
         blog.slug = slugify(slug).toLowerCase();
@@ -82,8 +81,6 @@ exports.create = ( req, res ) => {
         let image = contentObj.blocks.filter( (block) => {
             return block.type == 'image'
         })
-
-        
 
         if(!image.length == 0) {
             let finalImageUrl = [];
@@ -141,9 +138,8 @@ exports.create = ( req, res ) => {
         
         blog.save((err, result) => {
             if(err) {
-
                 return res.status(400).json({
-                    err: errorHandler(err)
+                    error: errorHandler(err)
                 })
             }
 

@@ -1,0 +1,7 @@
+File from: [public/rawImg/temp-5f107cf24cf54208e2158368/*.{jpg,JPG,jpeg,JPEG,png,svg,gif}]
+
+File to: [-]
+
+Compression algorithm: [-]
+
+Description:  Directory is empty!: 
