@@ -139,7 +139,7 @@ exports.create = ( req, res ) => {
         blog.save((err, result) => {
             if(err) {
                 return res.status(400).json({
-                    error: errorHandler(err)
+                    error: err
                 })
             }
 
