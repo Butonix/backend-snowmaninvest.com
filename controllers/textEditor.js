@@ -82,3 +82,14 @@ exports.imgResponse = (req, res) => {
         }
     })
 }
+
+exports.resetImage = ( req, res ) => {
+
+  // Remove Temp folder
+  fs.rmdir(`./public/img/temp-${req.user._id}`, { recursive: true }, (err) => {
+    if (err) {
+        throw err;
+    }
+  });
+
+}

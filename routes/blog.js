@@ -4,7 +4,7 @@ const path = require('path');
 const router = express.Router();
 const { create, list, read, photo, bookmark, remove, update, listSearch } = require('../controllers/blog');
 const { requireSignin, authMiddleware } = require('../controllers/auth');
-const { imgSlugger , imgResponse, imgUrl, compressImg, meta } = require('../controllers/textEditor');
+const { imgSlugger , imgResponse, imgUrl, compressImg, meta, resetImage } = require('../controllers/textEditor');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
 })
 
 const upload = multer({ storage: storage });
-
+router.post('/resetImage', requireSignin, resetImage);
 router.post('/uploadFile/:slug', imgSlugger, upload.single('image'), compressImg, imgResponse )
 router.get('/linkUrl', meta)
 router.post('/uploadUrl', imgUrl);
