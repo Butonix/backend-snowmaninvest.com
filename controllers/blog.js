@@ -135,11 +135,6 @@ exports.create = ( req, res ) => {
             blog.photo.data = fs.readFileSync(files.photo.path);
             blog.photo.contentType = files.photo.type;
         }        
-        
-        return res.status(200).json({
-            blog: blog
-        })
-
 
         blog.save((err, result) => {
             if(err) {
