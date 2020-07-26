@@ -82,14 +82,17 @@ exports.create = ( req, res ) => {
             return block.type == 'image'
         })
 
-        if(!image.length == 0) {
+        if(image.length != 0) {
             let finalImageUrl = [];
             let finalFileName = [];
 
+            // Get the Temporary URL and FileName
             for(let i = 0; i < image.length ; i++) {
                 finalImageUrl[i] = image[i].data.file.url;
                 finalFileName[i] = image[i].data.file.url.slice(image[i].data.file.url.indexOf("image"))
             }
+
+
             // Create Permanent Folder
             fs.mkdir(`./public/img/perma-${blog.postedBy}`,{ recursive: true }, (err) => {
                 if(err) {
@@ -97,26 +100,27 @@ exports.create = ( req, res ) => {
                 }
             })
 
+            // Move Image from Temp to Permanent
             for(let i = 0; i < image.length ; i++) {
                 fs.copyFileSync(`./public/img/temp-${blog.postedBy}/${finalFileName[i]}`,
                 `./public/img/perma-${blog.postedBy}/${finalFileName[i]}`);
             }
+
+            // Remove Temp folder
             fs.rmdir(`./public/img/temp-${blog.postedBy}`, { recursive: true }, (err) => {
                 if (err) {
                     throw err;
                 }
             });
 
-            let i = 0;
-            console.log(blog.body.blocks);
+            // Change the image url to permanent
+            let i = 0; //Because h will loop the whole blog blocks
             for ( let h = 0 ; h < blog.body.blocks.length; h++ ) {
                 if(blog.body.blocks[h].type == "image"){
                     blog.body.blocks[h].data.file.url =  `${process.env.EDITOR_URL}/static/img/perma-${blog.postedBy}/${finalFileName[i]}`;
-                    console.log("after: " , blog.body.blocks[h].data.file.url)
+                    i++;
                 }   
             }   
-
-
         }
 
         
